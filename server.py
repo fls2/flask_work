@@ -13,6 +13,7 @@ app.register_blueprint(myfile.app)
 kclf = MyKNclf().getModel()
 data = pd.read_excel('static/data/carprice.xlsx')
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -21,9 +22,9 @@ def index():
 @app.route("/member")
 def member():
     db = pymysql.connect(
-        host="localhost",
-        user='root',
-        password='1234',
+        host="192.168.0.12",
+        user='do1',
+        password='do1',
         charset='utf8',
         database='test')
     cur = db.cursor()
@@ -55,11 +56,11 @@ def memberform():
     elif request.method == 'POST':
         email = request.form['email']
         db = pymysql.connect(
-                host="localhost",
-                user='root',
-                password='1234',
-                charset='utf8',
-                database='test')
+            host="192.168.0.12",
+            user='do1',
+            password='do1',
+            charset='utf8',
+            database='test')
         cur = db.cursor()
         cur.execute(f'''insert into member
                     (email,password,name,regdate)
@@ -76,8 +77,8 @@ def test():
     pred2 = '파일을 업로드 하셔야 합니다.'
     knre = ""
     kcl = ""
-    x1="4"
-    x2="5"
+    x1 = "4"
+    x2 = "5"
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
@@ -105,8 +106,8 @@ def test():
             knr = KNeighborsRegressor(n_neighbors=3)
             knr.fit(x_train, y_train)
             x, y = int(request.form['x0']), int(request.form['x1'])
-            x1=x
-            x2=y
+            x1 = x
+            x2 = y
             pred1 = knr.predict([[x, y]])
             pred1 = f'예측하신 타겟값은 = {pred1} 입니다'
             knre = "show"
@@ -125,24 +126,29 @@ def test():
         except Exception as e:
             print(e)
             pred2 = e
-    return render_template("KNeighbors.html", pred1=pred1, pred2=pred2, knre=knre, kcl=kcl,x1=x1, x2=x2)
+    return render_template("KNeighbors.html", pred1=pred1, pred2=pred2, knre=knre, kcl=kcl, x1=x1, x2=x2)
 
-@app.route("/car",methods=['GET','POST'])
+
+@app.route("/car", methods=['GET', 'POST'])
 def car():
     global data
-    train_input = data[['년식','종류','연비','마력','토크','연료','하이브리드','배기량','중량','변속기']].to_numpy()
+    train_input = data[['년식', '종류', '연비', '마력', '토크',
+                        '연료', '하이브리드', '배기량', '중량', '변속기']].to_numpy()
     train_target = data['가격'].to_numpy()
-    table_data =  data[['년식','종류','연비','마력','토크','연료','하이브리드','배기량','중량','변속기','가격']].to_numpy()
-   
+    table_data = data[['년식', '종류', '연비', '마력', '토크', '연료',
+                       '하이브리드', '배기량', '중량', '변속기', '가격']].to_numpy()
+
     # # print(data.head()) 또는
     # for row in data:
     #     print(row)
-        
-    return render_template("car.html",table_data=table_data)
+
+    return render_template("car.html", table_data=table_data)
+
 
 @app.route("/aaa")
 def aaa():
     return render_template("aaa.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
